@@ -1,0 +1,11 @@
+# DICOM networking and communication
+pydicom>=2.4.0
+pynetdicom>=2.0.0
+
+
+# For configuration and utilities
+python-dotenv>=1.0.0
+
+# For testing
+pytest>=7.0.0
+pytest-mock>=3.6.0
