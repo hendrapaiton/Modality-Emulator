@@ -94,4 +94,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## Funding
+
+<img src="saweria.png" alt="Saweria QR Code" width="200"/>
+
+Support this project by donating through Saweria.
+
+---
+
 *This project is maintained by the open source community and is intended for educational and development purposes in medical imaging systems.*
