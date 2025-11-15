@@ -10,6 +10,7 @@ This project implements a modality emulator that simulates medical imaging devic
 
 - **MWL (Modality Worklist) Support**: Implementation of C-FIND operations to retrieve worklist entries from RIS systems
 - **PACS Communication**: Implementation of C-STORE operations for sending images to PACS systems
+- **DICOM StoreSCP Client**: Generate and send random DICOM files to your own DICOM server (storescp)
 - **DVTK RIS Emulator Integration**: Compatible with DVTK RIS Emulator for testing and development
 - **DICOM Standard Compliance**: Adheres to DICOM networking and communication standards
 - **Configurable Settings**: Easy configuration for different network environments and systems
@@ -20,6 +21,7 @@ The modality emulator supports:
 - C-FIND operations for worklist queries to MWL
 - C-STORE operations for image storage to PACS
 - Network communication following DICOM protocols
+- Random DICOM file generation and transmission
 
 ## Installation
 
@@ -38,11 +40,31 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Modality Worklist Emulator (MWL)
 1. Configure the DICOM settings in the configuration file
 2. Run the modality emulator:
 ```bash
 python -m src.modality_emulator
 ```
+
+### DICOM StoreCP Client (Modality Emulator for sending files)
+To generate and send random DICOM files to your storescp server (storescp -v -aet MYSTORE -od C:\dicom_store 11112):
+
+Run the module directly:
+```bash
+python -m src.storescp_client
+```
+
+Or run the test version:
+```bash
+python -m tests.test_dicom_sender
+```
+
+The script will:
+- Generate 10 random DICOM files with different modalities (CT, MR, PT, SC)
+- Send them to your storescp server at localhost:11112 with AE title MYSTORE
+- Clean up temporary files after successful transmission
+- Display a summary of successful/failed transmissions
 
 ## Testing
 

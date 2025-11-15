@@ -2,6 +2,8 @@
 pydicom>=2.4.0
 pynetdicom>=2.0.0
 
+# For image data generation
+numpy>=1.21.0
 
 # For configuration and utilities
 python-dotenv>=1.0.0
