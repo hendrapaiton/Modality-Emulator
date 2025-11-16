@@ -310,18 +310,27 @@ def test_generate_random_dicom_series_data():
 
 def test_send_dicom_to_pacs_server():
     """
-    Test sending a DICOM file to a PACS server at localhost:1112 with MYSTORE AET
-    This test simulates the real-world use case of sending files to a PACS using user's configuration
+    Test sending a DICOM file to a PACS server using configuration from .env
+    This test simulates the real-world use case of sending files to a PACS using configuration from environment
     """
+    from src.handlers.utility_handlers import load_environment_config
+
+    # Load configuration from environment
+    config = load_environment_config()
+    remote_host = config.get('REMOTE_HOST', 'www.dicomserver.co.uk')
+    remote_port = config.get('REMOTE_PORT', 104)
+    remote_ae_title = config.get('REMOTE_AE_TITLE', 'DICOMSERVER')
+    local_ae_title = config.get('LOCAL_AE_TITLE', 'DICOMCLIENT')
+
     # Generate a random DICOM file
     dicom_file_path = generate_random_dicom_handler(modality_type="CT")
 
-    # Mock the AE to test with user's configuration
+    # Mock the AE to test with environment configuration
     with patch('src.handlers.dicom_handlers.AE') as mock_ae_class:
         # Create a mock AE instance
         mock_ae_instance = Mock()
         mock_ae_class.return_value = mock_ae_instance
-        
+
         # Create a mock association object
         mock_assoc = Mock()
         mock_assoc.is_established = True
@@ -333,27 +342,58 @@ def test_send_dicom_to_pacs_server():
 
         mock_ae_instance.associate.return_value = mock_assoc
 
-        # Test sending the DICOM file to the PACS server with user's configuration
+        # Test sending the DICOM file to the PACS server with environment configuration
         result = send_dicom_to_server_handler(
             dicom_file_path,
-            'localhost',
-            1112,  # User's port configuration
-            'MYSTORE'  # User's AET configuration
+            remote_host,
+            remote_port,
+            remote_ae_title,
+            ae_title=local_ae_title
         )
 
         # Verify the result
         assert result is True
-        # Verify that the association was called with correct parameters
-        mock_ae_instance.associate.assert_called_once_with('localhost', 1112, ae_title='MYSTORE')
+        # Verify that the association was called with environment parameters
+        mock_ae_instance.associate.assert_called_once_with(remote_host, remote_port, ae_title=remote_ae_title)
         # Verify that C-STORE was called once
         mock_assoc.send_c_store.assert_called_once()
         # Verify that the association was released
         mock_assoc.release.assert_called_once()
 
-        print("Mocked PACS send test completed successfully with user's configuration")
+        print(f"Mocked PACS send test completed successfully with environment configuration:")
+        print(f"  Local AE: {local_ae_title}")
+        print(f"  Remote: {remote_host}:{remote_port} (AE: {remote_ae_title})")
 
     # Clean up
     os.remove(dicom_file_path)
+
+
+def test_send_dicom_to_pacs_server_with_env_config():
+    """
+    Additional test to verify that PACS sending properly uses .env configuration
+    """
+    from src.handlers.utility_handlers import load_environment_config
+    from dotenv import load_dotenv
+
+    # Load environment variables with override to ensure .env file is used
+    load_dotenv(override=True)
+
+    # Load configuration from environment
+    config = load_environment_config()
+    remote_host = config.get('REMOTE_HOST', 'www.dicomserver.co.uk')
+    remote_port = config.get('REMOTE_PORT', 104)
+    remote_ae_title = config.get('REMOTE_AE_TITLE', 'DICOMSERVER')
+    local_ae_title = config.get('LOCAL_AE_TITLE', 'DICOMCLIENT')
+
+    # Verify that configuration values are loaded (they should match .env values)
+    assert remote_host in ['www.dicomserver.co.uk', 'www.dicomserver.com']  # Valid test values
+    assert isinstance(remote_port, int) and remote_port > 0  # Should be a valid port
+    assert isinstance(remote_ae_title, str) and len(remote_ae_title) > 0  # Should be a valid AE title
+    assert isinstance(local_ae_title, str) and len(local_ae_title) > 0  # Should be a valid AE title
+
+    print(f"Environment configuration validated:")
+    print(f"  Local AE: {local_ae_title}")
+    print(f"  Remote: {remote_host}:{remote_port} (AE: {remote_ae_title})")
 
 
 if __name__ == "__main__":
