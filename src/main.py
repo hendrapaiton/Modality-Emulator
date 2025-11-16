@@ -190,19 +190,14 @@ def main(page: ft.Page):
                 ft.Text("System Status", size=18, weight=ft.FontWeight.BOLD),
                 ft.Divider(height=1, thickness=1, color="transparent"),
                 ft.Row([
-                    ft.Text("Connection:", size=14),
+                    ft.Text("Status:", size=14),
                     ft.Container(expand=True),
-                    ft.Text("Connected", size=14, color="green", weight=ft.FontWeight.BOLD)
+                    ft.Text("Ready", size=14, color="green", weight=ft.FontWeight.BOLD)
                 ]),
                 ft.Row([
                     ft.Text("Worklist:", size=14),
                     ft.Container(expand=True),
                     ft.Text("4 records", size=14, color="blue", weight=ft.FontWeight.BOLD)
-                ]),
-                ft.Row([
-                    ft.Text("Status:", size=14),
-                    ft.Container(expand=True),
-                    ft.Text("Ready", size=14, color="green", weight=ft.FontWeight.BOLD)
                 ])
             ], spacing=10),
             padding=20,
