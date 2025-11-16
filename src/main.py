@@ -57,13 +57,13 @@ def main(page: ft.Page):
     for item in worklist_data:
         row = ft.DataRow(
             cells=[
-                ft.DataCell(ft.Text(item["id"])),
+                ft.DataCell(ft.Row([ft.Icon(ft.Icons.PERSON, size=16), ft.Text(item["id"])])),
                 ft.DataCell(ft.Text(item["name"])),
                 ft.DataCell(ft.Text(str(item["age"]))),
                 ft.DataCell(get_gender_badge(item["gender"])),
-                ft.DataCell(ft.Text(item["date"])),
+                ft.DataCell(ft.Row([ft.Icon(ft.Icons.CALENDAR_TODAY, size=16), ft.Text(item["date"])])),
                 ft.DataCell(get_modality_badge(item["modality"])),
-                ft.DataCell(ft.Text(item["desc"])),
+                ft.DataCell(ft.Row([ft.Icon(ft.Icons.DESCRIPTION, size=16), ft.Text(item["desc"])])),
             ]
         )
         table_rows.append(row)
@@ -87,6 +87,7 @@ def main(page: ft.Page):
     # --- GET WORKLIST BUTTON ---
     get_worklist_btn = ft.ElevatedButton(
         "Get Worklist",
+        icon=ft.Icons.SEARCH,
         bgcolor="#1976d2",
         color="white",
         on_click=lambda e: print("Get Worklist clicked"),
@@ -139,6 +140,7 @@ def main(page: ft.Page):
     # --- CONTROLS PANEL ---
     scan_btn = ft.ElevatedButton(
         "Scan",
+        icon=ft.Icons.PLAY_ARROW,
         bgcolor="#388e3c",
         color="white",
         on_click=lambda e: print("Scan clicked"),
@@ -150,6 +152,7 @@ def main(page: ft.Page):
 
     cancel_btn = ft.ElevatedButton(
         "Cancel",
+        icon=ft.Icons.CLOSE,
         bgcolor="#bdbdbd",
         color="black",
         on_click=lambda e: print("Cancel clicked"),
