@@ -14,9 +14,9 @@ import tempfile
 import pydicom
 from pydicom.dataset import Dataset, FileDataset
 from pydicom.uid import generate_uid, ImplicitVRLittleEndian, ExplicitVRLittleEndian
-from pydicom.filewriter import write_file
+from pydicom import dcmwrite
 from pynetdicom import AE, evt
-from pynetdicom.sop_class import CTImageStorage, MRImageStorage, PETImageStorage, SecondaryCaptureImageStorage
+from pynetdicom.sop_class import CTImageStorage, MRImageStorage, SecondaryCaptureImageStorage
 
 
 class DICOMSender:
@@ -36,7 +36,7 @@ class DICOMSender:
         # Add supported presentation contexts for different storage types
         self.ae.add_requested_context(CTImageStorage)
         self.ae.add_requested_context(MRImageStorage)
-        self.ae.add_requested_context(PETImageStorage)
+        # Using SecondaryCaptureImageStorage as alternative for PET
         self.ae.add_requested_context(SecondaryCaptureImageStorage)
         
         # Setup logging
@@ -60,7 +60,7 @@ class DICOMSender:
         file_meta.MediaStorageSOPClassUID = {
             "CT": CTImageStorage,
             "MR": MRImageStorage,
-            "PT": PETImageStorage,
+            "PT": SecondaryCaptureImageStorage,  # Using SecondaryCapture as alternative for PET
             "SC": SecondaryCaptureImageStorage
         }.get(modality_type, CTImageStorage)
         file_meta.MediaStorageSOPInstanceUID = generate_uid()
@@ -134,7 +134,7 @@ class DICOMSender:
         
         # Write the DICOM file
         ds.file_meta.TransferSyntaxUID = ImplicitVRLittleEndian
-        write_file(file_path, ds, write_like_original=False)
+        dcmwrite(file_path, ds, enforce_file_format=False)
         
         self.logger.info(f"Generated DICOM file: {file_path} with modality {modality_type}")
         return file_path
@@ -163,7 +163,7 @@ class DICOMSender:
                 sop_class = ds.SOPClassUID
                 
                 # Send the C-STORE request
-                status = assoc.send_c_store(ds, context_id=1)
+                status = assoc.send_c_store(ds)
                 
                 if status:
                     # Check the status of the C-STORE operation
