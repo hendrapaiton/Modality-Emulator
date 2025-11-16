@@ -1,6 +1,7 @@
 import flet as ft
 from datetime import datetime
 
+
 def main(page: ft.Page):
     page.title = "Modality Emulator"
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -10,20 +11,28 @@ def main(page: ft.Page):
     # --- HEADER ---
     header = ft.Container(
         content=ft.Column([
-            ft.Text("Modality Emulator", size=32, weight=ft.FontWeight.BOLD, color="white"),
-            ft.Text("Medical Imaging System Interface", size=16, color="white70")
-        ], spacing=5),
-        padding=ft.Padding.all(20),
+            ft.Text("Modality Emulator", size=24,
+                    weight=ft.FontWeight.BOLD, color="white"),
+            ft.Text("Medical Imaging System Interface",
+                    size=14, color="white70")
+        ], spacing=3),
+        # Reduced vertical padding
+        padding=ft.Padding.symmetric(horizontal=20, vertical=15),
         bgcolor="#1976d2",
-        border_radius=ft.BorderRadius(top_left=0, top_right=0, bottom_left=0, bottom_right=0)
+        border_radius=ft.BorderRadius(
+            top_left=0, top_right=0, bottom_left=0, bottom_right=0)
     )
 
     # --- DATA WORKLIST ---
     worklist_data = [
-        {"id": "P001", "name": "John Doe", "age": 45, "gender": "M", "date": "2025-11-15", "modality": "CT", "desc": "CT Abdomen"},
-        {"id": "P002", "name": "Jane Smith", "age": 32, "gender": "F", "date": "2025-11-15", "modality": "MR", "desc": "MRI Brain"},
-        {"id": "P003", "name": "Robert Johnson", "age": 58, "gender": "M", "date": "2025-11-14", "modality": "X-Ray", "desc": "Chest X-Ray"},
-        {"id": "P004", "name": "Emily Davis", "age": 29, "gender": "F", "date": "2025-11-14", "modality": "US", "desc": "Abdominal Ultrasound"},
+        {"id": "P001", "name": "John Doe", "age": 45, "gender": "M",
+            "date": "2025-11-15", "modality": "CT", "desc": "CT Abdomen"},
+        {"id": "P002", "name": "Jane Smith", "age": 32, "gender": "F",
+            "date": "2025-11-15", "modality": "MR", "desc": "MRI Brain"},
+        {"id": "P003", "name": "Robert Johnson", "age": 58, "gender": "M",
+            "date": "2025-11-14", "modality": "X-Ray", "desc": "Chest X-Ray"},
+        {"id": "P004", "name": "Emily Davis", "age": 29, "gender": "F",
+            "date": "2025-11-14", "modality": "US", "desc": "Abdominal Ultrasound"},
     ]
 
     # --- HELPER: GENDER BADGE ---
@@ -52,36 +61,53 @@ def main(page: ft.Page):
             border_radius=15,
         )
 
-    # --- TABLE ROWS ---
-    table_rows = []
-    for item in worklist_data:
-        row = ft.DataRow(
-            cells=[
-                ft.DataCell(ft.Row([ft.Icon(ft.Icons.PERSON, size=16), ft.Text(item["id"])])),
-                ft.DataCell(ft.Text(item["name"])),
-                ft.DataCell(ft.Text(str(item["age"]))),
-                ft.DataCell(get_gender_badge(item["gender"])),
-                ft.DataCell(ft.Row([ft.Icon(ft.Icons.CALENDAR_TODAY, size=16), ft.Text(item["date"])])),
-                ft.DataCell(get_modality_badge(item["modality"])),
-                ft.DataCell(ft.Row([ft.Icon(ft.Icons.DESCRIPTION, size=16), ft.Text(item["desc"])])),
-            ]
-        )
-        table_rows.append(row)
+    # --- CUSTOM WORKLIST TABLE ---
+    # Create the header row - with consistent structure to data rows
+    header_row = ft.Container(
+        content=ft.Row(
+            controls=[
+                ft.Container(content=ft.Row([ft.Text("PATIENT ID", size=12, weight=ft.FontWeight.BOLD)], spacing=5), expand=True, padding=ft.Padding(10, 10, 5, 10)),
+                ft.Container(content=ft.Text("NAME", size=12, weight=ft.FontWeight.BOLD), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                ft.Container(content=ft.Text("AGE", size=12, weight=ft.FontWeight.BOLD), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                ft.Container(content=ft.Text("GENDER", size=12, weight=ft.FontWeight.BOLD), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                ft.Container(content=ft.Row([ft.Text("STUDY DATE", size=12, weight=ft.FontWeight.BOLD)], spacing=5), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                ft.Container(content=ft.Text("MODALITY", size=12, weight=ft.FontWeight.BOLD), expand=True, padding=ft.Padding(5, 10, 10, 10)),
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER
+        ),
+        bgcolor="#f0f0f0",
+        border=ft.Border.all(1, "#d0d0d0"),
+        border_radius=ft.BorderRadius(5, 5, 0, 0)
+    )
 
-    # --- WORKLIST TABLE ---
-    worklist_table = ft.DataTable(
-        heading_row_height=40,
-        data_row_min_height=60,
-        columns=[
-            ft.DataColumn(ft.Text("PATIENT ID", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("NAME", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("AGE", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("GENDER", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("STUDY DATE", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("MODALITY", size=12, weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("DESCRIPTION", size=12, weight=ft.FontWeight.BOLD)),
-        ],
-        rows=table_rows,
+    # Create the data rows - match structure and padding of header
+    data_rows = []
+    for item in worklist_data:
+        row = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Container(content=ft.Row([ft.Icon(ft.Icons.PERSON, size=16), ft.Text(item["id"])], spacing=5), expand=True, padding=ft.Padding(10, 10, 5, 10)),
+                    ft.Container(content=ft.Text(item["name"]), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                    ft.Container(content=ft.Text(str(item["age"])), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                    ft.Container(content=get_gender_badge(item["gender"]), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                    ft.Container(content=ft.Row([ft.Icon(ft.Icons.CALENDAR_TODAY, size=16), ft.Text(item["date"])], spacing=5), expand=True, padding=ft.Padding(5, 10, 5, 10)),
+                    ft.Container(content=get_modality_badge(item["modality"]), expand=True, padding=ft.Padding(5, 10, 10, 10)),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER
+            ),
+            border=ft.Border.only(bottom=ft.BorderSide(1, "#e0e0e0")),
+            bgcolor="white"
+        )
+        data_rows.append(row)
+
+    # Combine header and data rows in a column
+    worklist_table = ft.Column(
+        controls=[header_row] + data_rows,
+        spacing=0,
+        expand=True,
+        scroll=ft.ScrollMode.AUTO
     )
 
     # --- GET WORKLIST BUTTON ---
@@ -120,13 +146,14 @@ def main(page: ft.Page):
                     content=worklist_table,
                     bgcolor="white",
                     border=ft.Border(
-                left=ft.BorderSide(1, "transparent"),
-                top=ft.BorderSide(1, "transparent"),
-                right=ft.BorderSide(1, "transparent"),
-                bottom=ft.BorderSide(1, "transparent")
-            ),
+                        left=ft.BorderSide(1, "transparent"),
+                        top=ft.BorderSide(1, "transparent"),
+                        right=ft.BorderSide(1, "transparent"),
+                        bottom=ft.BorderSide(1, "transparent")
+                    ),
                     border_radius=8,
                     padding=10,
+                    expand=True  # Ensure container expands to fill space
                 ),
                 ft.Divider(height=1, thickness=1, color="transparent"),
                 ft.Row([
@@ -138,7 +165,8 @@ def main(page: ft.Page):
             padding=20,
             bgcolor="white",
             border_radius=10,
-            shadow=ft.BoxShadow(blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
+            shadow=ft.BoxShadow(
+                blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
         )
     )
 
@@ -169,8 +197,9 @@ def main(page: ft.Page):
 
     controls_panel = ft.Card(
         content=ft.Container(
-            content=ft.Column([
-                ft.Text("Controls", size=18, weight=ft.FontWeight.BOLD),
+            content=ft.Row([
+                ft.Text("Modality Control", size=18,
+                        weight=ft.FontWeight.BOLD),
                 ft.Divider(height=1, thickness=1, color="transparent"),
                 scan_btn,
                 ft.Divider(height=5, thickness=1, color="transparent"),
@@ -179,7 +208,8 @@ def main(page: ft.Page):
             padding=20,
             bgcolor="white",
             border_radius=10,
-            shadow=ft.BoxShadow(blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
+            shadow=ft.BoxShadow(
+                blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
         )
     )
 
@@ -190,20 +220,23 @@ def main(page: ft.Page):
                 ft.Text("System Status", size=18, weight=ft.FontWeight.BOLD),
                 ft.Divider(height=1, thickness=1, color="transparent"),
                 ft.Row([
-                    ft.Text("Status:", size=14),
+                    ft.Text("Status", size=14),
                     ft.Container(expand=True),
-                    ft.Text("Ready", size=14, color="green", weight=ft.FontWeight.BOLD)
+                    ft.Text("Ready", size=14, color="green",
+                            weight=ft.FontWeight.BOLD)
                 ]),
                 ft.Row([
-                    ft.Text("Worklist:", size=14),
+                    ft.Text("Worklist", size=14),
                     ft.Container(expand=True),
-                    ft.Text("4 records", size=14, color="blue", weight=ft.FontWeight.BOLD)
+                    ft.Text("4 records", size=14, color="blue",
+                            weight=ft.FontWeight.BOLD)
                 ])
             ], spacing=10),
             padding=20,
             bgcolor="white",
             border_radius=10,
-            shadow=ft.BoxShadow(blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
+            shadow=ft.BoxShadow(
+                blur_radius=5, spread_radius=1, color=ft.Colors.GREY_200)
         )
     )
 
@@ -216,18 +249,24 @@ def main(page: ft.Page):
 
     right_column = ft.Column([
         worklist_panel
-    ], spacing=20, expand=True)
+    ], spacing=20)
 
     main_layout = ft.Row([
         ft.Container(left_column, width=300, padding=10),
         ft.Container(right_column, expand=True, padding=10)
-    ], spacing=20)
+    ], spacing=20, expand=True)  # Main row expands to fill available width
 
-    # --- TAMPILKAN SEMUA ---
+    # Add all elements to page with proper expansion
     page.add(
-        header,
-        ft.Container(main_layout, padding=20)
+        ft.Column([
+            ft.Container(
+                header,
+                expand=False,  # Make header container expand to full width
+            ),
+            main_layout
+        ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
     )
+
 
 # Jalankan aplikasi
 if __name__ == "__main__":
