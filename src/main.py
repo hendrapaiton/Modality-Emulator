@@ -85,7 +85,7 @@ def main(page: ft.Page):
     )
 
     # --- GET WORKLIST BUTTON ---
-    get_worklist_btn = ft.ElevatedButton(
+    get_worklist_btn = ft.FilledButton(
         "Get Worklist",
         icon=ft.Icons.SEARCH,
         bgcolor="#1976d2",
@@ -119,7 +119,12 @@ def main(page: ft.Page):
                 ft.Container(
                     content=worklist_table,
                     bgcolor="white",
-                    border=ft.border.all(1, "transparent"),
+                    border=ft.Border(
+                left=ft.BorderSide(1, "transparent"),
+                top=ft.BorderSide(1, "transparent"),
+                right=ft.BorderSide(1, "transparent"),
+                bottom=ft.BorderSide(1, "transparent")
+            ),
                     border_radius=8,
                     padding=10,
                 ),
@@ -138,7 +143,7 @@ def main(page: ft.Page):
     )
 
     # --- CONTROLS PANEL ---
-    scan_btn = ft.ElevatedButton(
+    scan_btn = ft.FilledButton(
         "Scan",
         icon=ft.Icons.PLAY_ARROW,
         bgcolor="#388e3c",
@@ -150,7 +155,7 @@ def main(page: ft.Page):
         )
     )
 
-    cancel_btn = ft.ElevatedButton(
+    cancel_btn = ft.FilledButton(
         "Cancel",
         icon=ft.Icons.CLOSE,
         bgcolor="#bdbdbd",
